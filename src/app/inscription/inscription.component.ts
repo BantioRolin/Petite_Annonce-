@@ -1,3 +1,4 @@
+import { AuthService } from './../Service/aut-service.service';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -36,10 +37,12 @@ export class InscriptionComponent {
       text: 'Visibilité maximale'
     }
   ];
+  loginForm: any;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService : AuthService
   ) {
     this.registerForm = this.fb.group({
       nom: ['', [Validators.required, Validators.minLength(2)]],
@@ -50,6 +53,7 @@ export class InscriptionComponent {
     }, {
       validators: this.passwordMatchValidator
     });
+    
   }
 
   // Validateur personnalisé pour vérifier que les mots de passe correspondent
@@ -102,31 +106,23 @@ export class InscriptionComponent {
   }
 
   onSubmit(): void {
-    // Marquer tous les champs comme touchés pour afficher les erreurs
-    Object.keys(this.registerForm.controls).forEach(key => {
-      this.registerForm.get(key)?.markAsTouched();
-    });
+  if (this.loginForm.valid) {
+    const { email, password } = this.loginForm.value;
 
-    if (this.registerForm.valid) {
-      this.alertType = 'success';
-      this.alertMessage = 'Inscription réussie ! Redirection...';
-
-      // Simulation d'envoi au serveur
-      console.log('Données du formulaire:', this.registerForm.value);
-
-      // Redirection après 1.5 secondes
-      setTimeout(() => {
-        this.router.navigate(['/connexion']);
-      }, 1500);
-    } else {
-      this.alertType = 'error';
-      
-      if (!this.registerForm.get('terms')?.value) {
-        this.alertMessage = 'Veuillez accepter les conditions d\'utilisation';
-      } else {
-        this.alertMessage = 'Veuillez corriger les erreurs dans le formulaire';
+    this.authService.login({ email, password }).subscribe({
+      next: (res) => {
+        this.alertType = 'success';
+        this.alertMessage = 'Connexion réussie !';
+        
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 1500);
+      },
+      error: () => {
+        this.alertType = 'error';
+        this.alertMessage = 'Identifiants incorrects';
       }
-
+    });
       // Effacer le message après 3 secondes
       setTimeout(() => {
         this.alertMessage = '';
