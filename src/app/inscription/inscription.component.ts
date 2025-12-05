@@ -106,23 +106,28 @@ export class InscriptionComponent {
   }
 
   onSubmit(): void {
-  if (this.loginForm.valid) {
-    const { email, password } = this.loginForm.value;
+  if (this.registerForm.valid) {
+    const { nom, email, password } = this.registerForm.value;
 
-    this.authService.login({ email, password }).subscribe({
+    this.authService.register({
+      name: nom,  
+      email,
+      password
+    }).subscribe({
       next: (res) => {
         this.alertType = 'success';
-        this.alertMessage = 'Connexion réussie !';
+        this.alertMessage = 'Inscription réussie !';
         
         setTimeout(() => {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/login']);
         }, 1500);
       },
-      error: () => {
+      error: (err) => {
         this.alertType = 'error';
-        this.alertMessage = 'Identifiants incorrects';
+        this.alertMessage = err.error?.message || 'Erreur lors de l’inscription';
       }
     });
+
       // Effacer le message après 3 secondes
       setTimeout(() => {
         this.alertMessage = '';

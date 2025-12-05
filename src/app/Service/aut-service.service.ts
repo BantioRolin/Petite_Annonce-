@@ -1,31 +1,24 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.prod';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private API_URL = environment.BACKURL; 
+  private API_URL = environment.BACKURL;
 
   constructor(private http: HttpClient) {}
 
-  /** -------------- INSCRIPTION -------------- **/
-  register(data: any): Observable<any> {
+  register(data: { name: string; email: string; password: string }): Observable<any> {
     return this.http.post(`${this.API_URL}/auth/register`, data);
   }
 
-  /** -------------- CONNEXION -------------- **/
-  login(credentials: any): Observable<any> {
-    return this.http.post(`${this.API_URL}/auth/login`, credentials).pipe(
-      tap((res: any) => {
-        if (res?.token) {
-          localStorage.setItem('token', res.token);
-        }
-      })
-    );
+  login(data: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.API_URL}/auth/login`, data);
   }
 
   /** -------------- DÉCONNEXION -------------- **/

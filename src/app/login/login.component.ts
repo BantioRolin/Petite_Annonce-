@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../Service/aut-service.service';
 
 interface Benefit {
   icon: string;
@@ -39,7 +40,8 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -71,51 +73,85 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    // Marquer tous les champs comme touchés pour afficher les erreurs
-    Object.keys(this.loginForm.controls).forEach(key => {
-      this.loginForm.get(key)?.markAsTouched();
+  Object.keys(this.loginForm.controls).forEach(key => {
+    this.loginForm.get(key)?.markAsTouched();
+  });
+
+  if (this.loginForm.valid) {
+    this.isLoading = true;
+    const email = this.loginForm.get('email')?.value;
+    const password = this.loginForm.get('password')?.value;
+
+    this.authService.login({ email, password }).subscribe({
+      next: (res) => {
+        this.alertType = 'success';
+        this.alertMessage = 'Connexion réussie !';
+
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 1000);
+      },
+      error: () => {
+        this.alertType = 'error';
+        this.alertMessage = 'Identifiants incorrects';
+        this.isLoading = false;
+      }
     });
 
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      this.alertType = 'success';
-      this.alertMessage = 'Connexion...';
-
-      const email = this.loginForm.get('email')?.value;
-      const password = this.loginForm.get('password')?.value;
-
-      // Simulation d'authentification
-      setTimeout(() => {
-        // Vérifier les identifiants (démo)
-        if (email === 'demo@exemple.com' && password === 'demo123') {
-          this.alertType = 'success';
-          this.alertMessage = 'Connexion réussie !';
-          
-          // Redirection après succès
-          setTimeout(() => {
-            this.router.navigate(['/dashboard']); // ou '/accueil'
-          }, 1000);
-        } else {
-          this.alertType = 'error';
-          this.alertMessage = 'Identifiants incorrects';
-          this.isLoading = false;
-          
-          // Effacer le message après 3 secondes
-          setTimeout(() => {
-            this.alertMessage = '';
-            this.alertType = '';
-          }, 3000);
-        }
-      }, 800);
-    } else {
-      this.alertType = 'error';
-      this.alertMessage = 'Veuillez corriger les erreurs dans le formulaire';
-      
-      // Effacer le message après 3 secondes
-      setTimeout(() => {
-        this.alertMessage = '';
-        this.alertType = '';
-      }, 3000);
-    }
+    setTimeout(() => {
+      this.alertMessage = '';
+      this.alertType = '';
+    }, 3000);
   }
+}
+
+
+  // onSubmit(): void {
+  //   // Marquer tous les champs comme touchés pour afficher les erreurs
+  //   Object.keys(this.loginForm.controls).forEach(key => {
+  //     this.loginForm.get(key)?.markAsTouched();
+  //   });
+
+  //   if (this.loginForm.valid) {
+  //     this.isLoading = true;
+  //     this.alertType = 'success';
+  //     this.alertMessage = 'Connexion...';
+
+  //     const email = this.loginForm.get('email')?.value;
+  //     const password = this.loginForm.get('password')?.value;
+
+  //     // Simulation d'authentification
+  //     setTimeout(() => {
+  //       // Vérifier les identifiants (démo)
+  //       if (email === 'demo@exemple.com' && password === 'demo123') {
+  //         this.alertType = 'success';
+  //         this.alertMessage = 'Connexion réussie !';
+          
+  //         // Redirection après succès
+  //         setTimeout(() => {
+  //           this.router.navigate(['/dashboard']); // ou '/accueil'
+  //         }, 1000);
+  //       } else {
+  //         this.alertType = 'error';
+  //         this.alertMessage = 'Identifiants incorrects';
+  //         this.isLoading = false;
+          
+  //         // Effacer le message après 3 secondes
+  //         setTimeout(() => {
+  //           this.alertMessage = '';
+  //           this.alertType = '';
+  //         }, 3000);
+  //       }
+  //     }, 800);
+  //   } else {
+  //     this.alertType = 'error';
+  //     this.alertMessage = 'Veuillez corriger les erreurs dans le formulaire';
+      
+  //     // Effacer le message après 3 secondes
+  //     setTimeout(() => {
+  //       this.alertMessage = '';
+  //       this.alertType = '';
+  //     }, 3000);
+  //   }
+  // }
 }
