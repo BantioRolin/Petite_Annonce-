@@ -1,0 +1,509 @@
+// Variables
+$primary-color: #261be9ff;
+$secondary-color: #10b981;
+$danger-color: #ef4444;
+$text-dark: #1f2937;
+$text-light: #6b7280;
+$bg-light: #f9fafb;
+$white: #ffffff;
+$border-color: #e5e7eb;
+$shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+// Mixins
+@mixin transition($property: all) {
+  transition: $property 0.3s ease;
+}
+
+// Reset
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: $bg-light;
+}
+
+// Auth Section
+.auth-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: $bg-light;
+  
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+// Auth Container
+.auth-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: $white;
+  border-radius: 16px;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+  min-height: 600px;
+}
+
+// Left Side - Image
+.auth-image {
+  background: linear-gradient(135deg, #667eea 0%, #616ee1ff 100%);
+  color: $white;
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .auth-image-content {
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    
+    > p {
+      font-size: 1.125rem;
+      margin-bottom: 3rem;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+  }
+  
+  .benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.125rem;
+    
+    .benefit-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      
+      img {
+        width: 28px;
+        height: 28px;
+        filter: brightness(0) invert(1);
+      }
+    }
+    
+    span {
+      font-weight: 500;
+    }
+  }
+}
+
+// Right Side - Form
+.auth-form-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  
+  .auth-form-container {
+    width: 100%;
+    max-width: 450px;
+  }
+  
+  .form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-dark;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+}
+
+// Form
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    
+    label {
+      font-weight: 600;
+      color: $text-dark;
+      font-size: 0.95rem;
+    }
+    
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      
+      .input-icon-img {
+        position: absolute;
+        left: 1rem;
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        opacity: 0.5;
+      }
+      
+      input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        padding-left: 3rem;
+        border: 2px solid $border-color;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        color: $text-dark;
+        background: $white;
+        @include transition(all);
+        
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        &.error {
+          border-color: $danger-color;
+          
+          &:focus {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+          }
+        }
+        
+        &::placeholder {
+          color: $text-light;
+          opacity: 0.7;
+        }
+      }
+    }
+    
+    .password-input {
+      position: relative;
+      display: flex;
+      align-items: center;
+      
+      .input-icon-img.left {
+        position: absolute;
+        left: 1rem;
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        opacity: 0.5;
+        z-index: 1;
+      }
+      
+      input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        padding-left: 3rem;
+        padding-right: 3rem;
+        border: 2px solid $border-color;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        color: $text-dark;
+        background: $white;
+        @include transition(all);
+        
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        &.error {
+          border-color: $danger-color;
+          
+          &:focus {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+          }
+        }
+        
+        &::placeholder {
+          color: $text-light;
+          opacity: 0.7;
+        }
+      }
+      
+      .toggle-password {
+        position: absolute;
+        right: 1rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @include transition();
+        
+        img {
+          width: 20px;
+          height: 20px;
+          opacity: 0.6;
+        }
+        
+        &:hover img {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+      }
+    }
+    
+    .error-message {
+      color: $danger-color;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-top: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      
+      &:before {
+        content: "⚠";
+        font-size: 1rem;
+      }
+    }
+  }
+  
+  .btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, $primary-color, #764ba2);
+    color: $white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    @include transition(all);
+    margin-top: 0.5rem;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: $shadow-lg;
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    
+    &:disabled {
+      background: $text-light;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+  
+  .alert-message {
+    padding: 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+    animation: slideIn 0.3s ease;
+    
+    &.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: $secondary-color;
+      border: 1px solid $secondary-color;
+    }
+    
+    &.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: $danger-color;
+      border: 1px solid $danger-color;
+    }
+  }
+}
+
+// Footer Text
+.auth-footer-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: $text-light;
+  font-size: 0.95rem;
+  
+  .auth-link {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 700;
+    @include transition();
+    
+    &:hover {
+      text-decoration: underline;
+      color: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Animations
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes inputFocus {
+  from {
+    transform: scale(0.98);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+input {
+  &:focus {
+    animation: inputFocus 0.3s ease;
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .auth-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .auth-image {
+    padding: 3rem 2rem;
+    min-height: auto;
+    
+    .auth-image-content {
+      h2 {
+        font-size: 2rem;
+      }
+      
+      > p {
+        margin-bottom: 2rem;
+      }
+    }
+    
+    .benefits-list {
+      gap: 1rem;
+    }
+    
+    .benefit-item {
+      font-size: 1rem;
+    }
+  }
+  
+  .auth-form-wrapper {
+    padding: 3rem 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-section {
+    padding: 1rem;
+  }
+  
+  .auth-container {
+    border-radius: 12px;
+  }
+  
+  .auth-image {
+    padding: 2rem 1.5rem;
+    
+    .auth-image-content {
+      h2 {
+        font-size: 1.75rem;
+      }
+      
+      > p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+    }
+    
+    .benefit-item {
+      font-size: 0.95rem;
+      
+      .benefit-icon img {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+  
+  .auth-form-wrapper {
+    padding: 2rem 1.5rem;
+    
+    .form-title {
+      font-size: 1.75rem;
+    }
+  }
+  
+  .auth-form {
+    gap: 1.25rem;
+    
+    .form-group {
+      .input-wrapper input,
+      .password-input input {
+        padding: 0.75rem 1rem;
+        padding-left: 2.75rem;
+        font-size: 0.95rem;
+      }
+      
+      .password-input input {
+        padding-right: 2.75rem;
+      }
+    }
+    
+    .btn-submit {
+      padding: 0.875rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+// Loading state
+.btn-submit {
+  &:disabled {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: $white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}

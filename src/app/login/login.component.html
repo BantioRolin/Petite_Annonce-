@@ -1,0 +1,109 @@
+<section class="auth-section">
+  <div class="container">
+    <div class="auth-container">
+      
+      <!-- IMAGE / LEFT SIDE -->
+      <div class="auth-image">
+        <div class="auth-image-content">
+          <h2>Bon retour !</h2>
+          <p>Reprenez la gestion de vos annonces en un clic.</p>
+          
+          <div class="benefits-list">
+            <div class="benefit-item" *ngFor="let benefit of benefits">
+              <div class="benefit-icon">
+                <img [src]="benefit.icon" alt="Check icon">
+              </div>
+              <span>{{ benefit.text }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM / RIGHT SIDE -->
+      <div class="auth-form-wrapper">
+        <div class="auth-form-container">
+          <h2 class="form-title">Connexion</h2>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="email">Email</label>
+              <div class="input-wrapper">
+                <img 
+                  src="https://cdn-icons-png.flaticon.com/512/732/732200.png" 
+                  alt="Email icon" 
+                  class="input-icon-img">
+                <input 
+                  type="email" 
+                  id="email" 
+                  formControlName="email"
+                  placeholder="email@exemple.com"
+                  [class.error]="isFieldInvalid('email')">
+              </div>
+              <div class="error-message" *ngIf="isFieldInvalid('email')">
+                {{ getErrorMessage('email') }}
+              </div>
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="form-group">
+              <label for="password">Mot de passe</label>
+              <div class="password-input">
+                <img 
+                  src="https://cdn-icons-png.flaticon.com/512/2889/2889676.png" 
+                  alt="Lock icon" 
+                  class="input-icon-img left">
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  id="password" 
+                  formControlName="password"
+                  placeholder="Votre mot de passe"
+                  [class.error]="isFieldInvalid('password')">
+                <button 
+                  type="button" 
+                  class="toggle-password"
+                  (click)="togglePasswordVisibility()">
+                  <img 
+                    [src]="showPassword ? 'https://cdn-icons-png.flaticon.com/512/709/709612.png' : 'https://cdn-icons-png.flaticon.com/512/2767/2767146.png'" 
+                    alt="Toggle visibility">
+                </button>
+              </div>
+              <div class="error-message" *ngIf="isFieldInvalid('password')">
+                {{ getErrorMessage('password') }}
+              </div>
+            </div>
+
+            <!-- Bouton de connexion -->
+            <button 
+              type="submit" 
+              class="btn-submit"
+              [disabled]="loginForm.invalid || isLoading">
+              {{ isLoading ? 'Connexion...' : 'Se connecter' }}
+            </button>
+
+            <!-- Message d'alerte -->
+            <div 
+              class="alert-message" 
+              *ngIf="alertMessage"
+              [class.success]="alertType === 'success'"
+              [class.error]="alertType === 'error'">
+              {{ alertMessage }}
+            </div>
+
+          </form>
+
+          <!-- Footer -->
+          <p class="auth-footer-text">
+            Pas encore de compte ?
+            <a routerLink="/inscription" class="auth-link">
+              Créer un compte
+            </a>
+          </p>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

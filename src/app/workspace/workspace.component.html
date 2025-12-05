@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Espace - Petites Annonces</title>
+       <link rel="stylesheet" href="workspace.component.css">
+
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <h1>📢 Petites Annonces</h1>
+            </div>
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="avatar">JD</div>
+                    <div>
+                        <div style="font-weight: 600;">John Doe</div>
+                        <div style="font-size: 0.875rem; color: #6b7280;">john.doe@exemple.com</div>
+                    </div>
+                </div>
+                <button class="btn btn-logout" onclick="logout()">Déconnexion</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3>Menu</h3>
+            <ul class="menu-list">
+                <li class="menu-item active" onclick="showSection('dashboard')">
+                    <span class="menu-icon">📊</span>
+                    <span>Tableau de bord</span>
+                </li>
+                <li class="menu-item" onclick="showSection('annonces')">
+                    <span class="menu-icon">📝</span>
+                    <span>Mes annonces</span>
+                </li>
+                <li class="menu-item" onclick="showSection('profil')">
+                    <span class="menu-icon">👤</span>
+                    <span>Mon profil</span>
+                </li>
+                <li class="menu-item" onclick="showSection('parametres')">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Paramètres</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <main class="content-area">
+            <!-- DASHBOARD SECTION -->
+            <div id="dashboard-section" class="section">
+                <div class="content-header">
+                    <h2 class="content-title">Tableau de bord</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalAnnonces">0</div>
+                        <div class="stat-label">Total des annonces</div>
+                    </div>
+                    <div class="stat-card secondary">
+                        <div class="stat-value" id="activeAnnonces">0</div>
+                        <div class="stat-label">Annonces actives</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-value" id="viewsCount">0</div>
+                        <div class="stat-label">Vues totales</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 1rem;">Annonces récentes</h3>
+                <div id="recentAnnonces"></div>
+            </div>
+
+            <!-- ANNONCES SECTION -->
+            <div id="annonces-section" class="section" style="display: none;">
+                <div class="content-header">
+                    <h2 class="content-title">Mes annonces</h2>
+                    <button class="btn btn-primary" onclick="openCreateModal()">
+                        <span>➕</span>
+                        <span>Créer une annonce</span>
+                    </button>
+                </div>
+
+                <div id="annoncesList"></div>
+            </div>
+
+            <!-- PROFIL SECTION -->
+            <div id="profil-section" class="section" style="display: none;">
+                <div class="content-header">
+                    <h2 class="content-title">Mon profil</h2>
+                </div>
+                <div style="max-width: 600px;">
+                    <div class="form-group">
+                        <label>Nom complet</label>
+                        <input type="text" value="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" value="john.doe@exemple.com" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" placeholder="+237 6XX XX XX XX">
+                    </div>
+                    <div class="form-group">
+                        <label>Ville</label>
+                        <input type="text" placeholder="Bamenda">
+                    </div>
+                    <button class="btn btn-primary">Enregistrer les modifications</button>
+                </div>
+            </div>
+
+            <!-- PARAMETRES SECTION -->
+            <div id="parametres-section" class="section" style="display: none;">
+                <div class="content-header">
+                    <h2 class="content-title">Paramètres</h2>
+                </div>
+                <div style="max-width: 600px;">
+                    <h3 style="margin-bottom: 1rem;">Notifications</h3>
+                    <div class="form-group">
+                        <label class="checkbox-label" style="display: flex; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" checked>
+                            <span>Recevoir des notifications par email</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label" style="display: flex; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" checked>
+                            <span>Alertes pour les nouvelles annonces similaires</span>
+                        </label>
+                    </div>
+                    <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--border-color);">
+                    <h3 style="margin-bottom: 1rem;">Sécurité</h3>
+                    <button class="btn btn-warning">Changer le mot de passe</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL CREATE/EDIT ANNONCE -->
+    <div id="annonceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Créer une annonce</h3>
+                <button class="btn-close" onclick="closeModal()">✕</button>
+            </div>
+            <form id="annonceForm">
+                <input type="hidden" id="annonceId">
+                
+                <div class="form-group">
+                    <label>Titre de l'annonce *</label>
+                    <input type="text" id="titre" required placeholder="Ex: Appartement 2 pièces à louer">
+                </div>
+
+                <div class="form-group">
+                    <label>Type d'annonce *</label>
+                    <select id="type" required>
+                        <option value="">Sélectionnez un type</option>
+                        <option value="vente">Vente</option>
+                        <option value="location">Location</option>
+                        <option value="service">Service</option>
+                        <option value="emploi">Emploi</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="description" required placeholder="Décrivez votre annonce en détail..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Prix (optionnel)</label>
+                    <input type="number" id="prix" placeholder="Ex: 50000">
+                </div>
+
+                <div class="form-group">
+                    <label>Images</label>
+                    <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
+                        <div>Cliquez pour ajouter des images</div>
+                        <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">
+                            Maximum 5 images
+                        </div>
+                    </div>
+                    <input type="file" id="imageInput" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
+                    <div id="imagePreview" class="image-preview-grid"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Publier l'annonce</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let annonces = JSON.parse(localStorage.getItem('annonces')) || [];
+        let currentImages = [];
+        let editingId = null;
+
+        // Initialize
+        function init() {
+            updateStats();
+            renderAnnonces();
+            renderRecentAnnonces();
+        }
+
+        // Show section
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(`${section}-section`).style.display = 'block';
+            event.target.closest('.menu-item').classList.add('active');
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('totalAnnonces').textContent = annonces.length;
+            document.getElementById('activeAnnonces').textContent = annonces.length;
+            document.getElementById('viewsCount').textContent = annonces.reduce((sum, a) => sum + (a.views || 0), 0);
+        }
+
+        // Render annonces
+        function renderAnnonces() {
+            const container = document.getElementById('annoncesList');
+            
+            if (annonces.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <h3 class="empty-state-title">Aucune annonce</h3>
+                        <p class="empty-state-text">Vous n'avez pas encore créé d'annonce. Commencez maintenant !</p>
+                        <button class="btn btn-primary" onclick="openCreateModal()">Créer ma première annonce</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="annonces-grid">
+                    ${annonces.map(annonce => `
+                        <div class="annonce-card">
+                            <div class="annonce-image">
+                                ${annonce.images && annonce.images.length > 0 
+                                    ? `<img src="${annonce.images[0]}" alt="${annonce.titre}">` 
+                                    : '📷'}
+                            </div>
+                            <div class="annonce-info">
+                                <div class="annonce-header">
+                                    <h3 class="annonce-title">${annonce.titre}</h3>
+                                    <span class="badge badge-primary">${annonce.type}</span>
+                                </div>
+                                <p class="annonce-description">${annonce.description.substring(0, 150)}...</p>
+                                <div class="annonce-meta">
+                                    <span>👁️ ${annonce.views || 0} vues</span>
+                                    <span>📅 ${new Date(annonce.date).toLocaleDateString()}</span>
+                                    ${annonce.prix ? `<span>💰 ${annonce.prix} FCFA</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="annonce-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="viewAnnonce(${annonce.id})">
+                                    👁️ Voir
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="editAnnonce(${annonce.id})">
+                                    ✏️ Modifier
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteAnnonce(${annonce.id})">
+                                    🗑️ Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Render recent annonces
+        function renderRecentAnnonces() {
+            const container = document.getElementById('recentAnnonces');
+            const recent = annonces.slice(-3).reverse();
+            
+            if (recent.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280;">Aucune annonce récente</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="annonces-grid">
+                    ${recent.map(annonce => `
+                        <div class="annonce-card">
+                            <div class="annonce-image">
+                                ${annonce.images && annonce.images.length > 0 
+                                    ? `<img src="${annonce.images[0]}" alt="${annonce.titre}">` 
+                                    : '📷'}
+                            </div>
+                            <div class="annonce-info">
+                                <div class="annonce-header">
+                                    <h3 class="annonce-title">${annonce.titre}</h3>
+                                    <span class="badge badge-success">Nouvelle</span>
+                                </div>
+                                <p class="annonce-description">${annonce.description.substring(0, 100)}...</p>
+                                <div class="annonce-meta">
+                                    <span>📅 ${new Date(annonce.date).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                            <div class="annonce-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="viewAnnonce(${annonce.id})">
+                                    👁️ Voir
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Open create modal
+        function openCreateModal() {
+            editingId = null;
+            currentImages = [];
+            document.getElementById('modalTitle').textContent = 'Créer une annonce';
+            document.getElementById('annonceForm').reset();
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('annonceModal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('annonceModal').classList.remove('active');
+        }
+
+        // Handle image upload
+        function handleImageUpload(event) {
+            const files = Array.from(event.target.files);
+            
+            if (currentImages.length + files.length > 5) {
+                alert('Maximum 5 images autorisées');
+                return;
+            }
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentImages.push(e.target.result);
+                    renderImagePreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Render image previews
+        function renderImagePreviews() {
+            const container = document.getElementById('imagePreview');
+        }
+    </script>
+
+</body>
+</html>

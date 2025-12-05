@@ -1,0 +1,150 @@
+<div class="auth-wrapper">
+  
+  <!-- LEFT SIDE -->
+  <div class="auth-left">
+    <h2>Rejoignez-nous dès aujourd'hui !</h2>
+    <p>Créez votre compte et commencez à publier vos annonces gratuitement</p>
+
+    <div class="benefits-list">
+      <div class="benefit-item" *ngFor="let benefit of benefits">
+        <img [src]="benefit.icon" alt="Check icon" class="benefit-icon">
+        <span>{{ benefit.text }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="auth-right">
+    <h2 class="form-title">Inscription</h2>
+    <p class="form-subtitle">Créez votre compte en quelques secondes</p>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+
+      <!-- Nom complet -->
+      <div class="form-group">
+        <label for="nom">Nom complet</label>
+        <div class="input-wrapper">
+          <img 
+            src="https://i.pinimg.com/736x/43/14/0a/43140a3803e5f1b39c1ffac1a35a3ec7.jpg" 
+            alt="User icon" 
+            class="input-icon-img">
+          <input 
+            type="text" 
+            id="nom" 
+            formControlName="nom"
+            placeholder="Votre nom complet"
+            [class.error]="isFieldInvalid('nom')">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('nom')">
+          {{ getErrorMessage('nom') }}
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Adresse email</label>
+        <div class="input-wrapper">
+          <img 
+            src="https://i.pinimg.com/736x/01/a6/e9/01a6e9cf39ee00a329e5dd648600e57a.jpg" 
+            alt="Email icon" 
+            class="input-icon-img">
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            placeholder="exemple@gmail.com"
+            [class.error]="isFieldInvalid('email')">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('email')">
+          {{ getErrorMessage('email') }}
+        </div>
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <div class="input-wrapper">
+          <img 
+            src="https://cdn-icons-png.flaticon.com/512/2889/2889676.png" 
+            alt="Lock icon" 
+            class="input-icon-img left">
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            id="password" 
+            formControlName="password"
+            placeholder="Minimum 6 caractères"
+            [class.error]="isFieldInvalid('password')">
+          <img 
+            [src]="showPassword ? 'https://cdn-icons-png.flaticon.com/512/709/709612.png' : 'https://cdn-icons-png.flaticon.com/512/2767/2767146.png'" 
+            alt="Toggle visibility" 
+            class="input-icon-img right toggle-password"
+            (click)="togglePasswordVisibility('password')">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('password')">
+          {{ getErrorMessage('password') }}
+        </div>
+      </div>
+
+      <!-- Confirmer mot de passe -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <div class="input-wrapper">
+          <img 
+            src="https://cdn-icons-png.flaticon.com/512/2889/2889676.png" 
+            alt="Lock icon" 
+            class="input-icon-img left">
+          <input 
+            [type]="showConfirmPassword ? 'text' : 'password'" 
+            id="confirmPassword" 
+            formControlName="confirmPassword"
+            placeholder="Retapez votre mot de passe"
+            [class.error]="isFieldInvalid('confirmPassword')">
+          <img 
+            [src]="showConfirmPassword ? 'https://cdn-icons-png.flaticon.com/512/709/709612.png' : 'https://cdn-icons-png.flaticon.com/512/2767/2767146.png'" 
+            alt="Toggle visibility" 
+            class="input-icon-img right toggle-password"
+            (click)="togglePasswordVisibility('confirmPassword')">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('confirmPassword')">
+          {{ getErrorMessage('confirmPassword') }}
+        </div>
+      </div>
+
+      <!-- Conditions d'utilisation -->
+      <div class="checkbox-group">
+        <input 
+          type="checkbox" 
+          id="terms" 
+          formControlName="terms">
+        <label for="terms">
+          J'accepte les <a routerLink="/conditions">conditions d'utilisation</a>
+        </label>
+      </div>
+
+      <!-- Bouton de soumission -->
+      <button 
+        type="submit" 
+        class="btn-submit"
+        [disabled]="registerForm.invalid">
+        S'inscrire
+      </button>
+
+      <!-- Message d'alerte -->
+      <div 
+        class="alert-message" 
+        *ngIf="alertMessage"
+        [class.success]="alertType === 'success'"
+        [class.error]="alertType === 'error'">
+        {{ alertMessage }}
+      </div>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+      <p>Vous avez déjà un compte ? <a routerLink="/connexion">Se connecter</a></p>
+    </div>
+
+  </div>
+
+</div>
