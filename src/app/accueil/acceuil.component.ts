@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -36,6 +36,22 @@ interface ContactInfo {
   styleUrls: ['./accueil.component.scss']
 })
 export class AccueilComponent {
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  ngOnInit() {
+    this.loadAnnonces();
+  }
+
+  loadAnnonces() {
+    if (isPlatformBrowser(this.platformId)) {
+      const annonces = localStorage.getItem('annonces');
+      console.log('Annonces chargées :', annonces);
+    } else {
+      console.log('LocalStorage indisponible côté serveur');
+    }
+  }
+
   contactForm = {
     name: '',
     email: '',
@@ -43,10 +59,10 @@ export class AccueilComponent {
   };
 
   heroIcons: string[] = [
-    'https://i.pinimg.com/1200x/a0/0e/64/a00e641cea95eb9eefe51b8ca720c2eb.jpg', // Maison
-    'https://i.pinimg.com/1200x/29/47/53/294753a85f2cb9977a95f0691d83637a.jpg', // Voiture
-    'https://i.pinimg.com/736x/bb/07/8b/bb078b787f3e989738b543e033b6af66.jpg', // Valise
-    'https://i.pinimg.com/1200x/62/d0/8b/62d08b9dae87c130f793aa69a287be76.jpg' // Smartphone
+    'https://i.pinimg.com/1200x/a0/0e/64/a00e641cea95eb9eefe51b8ca720c2eb.jpg',
+    'https://i.pinimg.com/1200x/29/47/53/294753a85f2cb9977a95f0691d83637a.jpg',
+    'https://i.pinimg.com/736x/bb/07/8b/bb078b787f3e989738b543e033b6af66.jpg',
+    'https://i.pinimg.com/1200x/62/d0/8b/62d08b9dae87c130f793aa69a287be76.jpg'
   ];
 
   features: Feature[] = [
@@ -150,7 +166,6 @@ export class AccueilComponent {
   onSubmitContact(): void {
     if (this.contactForm.name && this.contactForm.email && this.contactForm.message) {
       console.log('Formulaire soumis:', this.contactForm);
-      // Logique d'envoi du formulaire
       alert('Message envoyé avec succès!');
       this.resetForm();
     }
