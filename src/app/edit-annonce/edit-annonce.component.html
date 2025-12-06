@@ -20,14 +20,20 @@
 <div class="page-header">
   <div class="container">
     <div class="page-header-icon">
-      <img src="https://cdn-icons-png.flaticon.com/512/3176/3176366.png" alt="Create">
+      <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit">
     </div>
-    <h1 class="page-title">Créer une nouvelle annonce</h1>
-    <p class="page-subtitle">Remplissez les informations ci-dessous pour publier votre annonce</p>
+    <h1 class="page-title">Modifier l'annonce</h1>
+    <p class="page-subtitle">Mettez à jour les informations de votre annonce</p>
   </div>
 </div>
 
 <div class="container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner-large"></div>
+    <p>Chargement de l'annonce...</p>
+  </div>
+
   <!-- Alert -->
   <div *ngIf="showAlert" 
        class="alert" 
@@ -55,8 +61,14 @@
     <span>{{ alertMessage }}</span>
   </div>
 
+  <!-- Changes Indicator -->
+  <div *ngIf="!isLoading && hasChanges()" class="changes-indicator">
+    <img src="https://cdn-icons-png.flaticon.com/512/471/471662.png" alt="Info" style="width: 20px; height: 20px;">
+    <span>Vous avez des modifications non enregistrées</span>
+  </div>
+
   <!-- Form Card -->
-  <div class="form-card">
+  <div class="form-card" *ngIf="!isLoading">
     <form [formGroup]="annonceForm" (ngSubmit)="onSubmit()">
       
       <!-- Section 1: Type d'annonce -->
@@ -65,7 +77,7 @@
           <img src="https://cdn-icons-png.flaticon.com/512/2785/2785482.png" alt="Type" class="section-icon">
           <span>Type d'annonce</span>
         </h2>
-        <p class="section-subtitle">Sélectionnez le type d'annonce que vous souhaitez créer</p>
+        <p class="section-subtitle">Sélectionnez le type d'annonce</p>
         <div class="section-divider"></div>
         
         <div class="type-cards">
@@ -238,7 +250,7 @@
           <span>Photos de l'annonce</span>
         </h2>
         <p class="section-subtitle">
-          ✨ Ajoutez des photos de qualité pour attirer plus d'acheteurs (au moins 1 photo requise)
+          ✨ Modifiez ou ajoutez des photos (au moins 1 photo requise)
         </p>
         <div class="section-divider"></div>
 
@@ -274,15 +286,18 @@
           <div class="progress-bar-container">
             <div class="progress-bar" [style.width.%]="uploadProgress"></div>
           </div>
-          <p class="progress-text">Envoi en cours... {{ uploadProgress }}%</p>
+          <p class="progress-text">Mise à jour en cours... {{ uploadProgress }}%</p>
         </div>
 
         <div class="image-preview-grid" *ngIf="uploadedImages.length > 0">
           <div class="image-preview-item animate-fade-in" 
-               *ngFor="let img of uploadedImages; let i = index">
+               *ngFor="let img of uploadedImages; let i = index"
+               [class.existing-image]="img.isExisting">
             <img [src]="img.data" [alt]="img.name">
             <div class="image-overlay">
               <span class="image-name">{{ img.name }}</span>
+              <span *ngIf="img.isExisting" class="image-badge">Existante</span>
+              <span *ngIf="!img.isExisting" class="image-badge new">Nouvelle</span>
             </div>
             <button type="button" 
                     class="remove-image-btn" 
@@ -297,7 +312,7 @@
         <div class="image-count animate-fade-in" *ngIf="uploadedImages.length > 0">
           <img src="https://cdn-icons-png.flaticon.com/512/3342/3342137.png" alt="Images" class="count-icon">
           <span>
-            <strong>{{ uploadedImages.length }}</strong>/{{ MAX_IMAGES }} images ajoutées
+            <strong>{{ uploadedImages.length }}</strong>/{{ MAX_IMAGES }} images
             <span *ngIf="uploadedImages.length === MAX_IMAGES" style="color: #10b981;">
               ✓ Maximum atteint
             </span>
@@ -311,17 +326,16 @@
           <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" alt="Cancel" class="btn-icon">
           <span>Annuler</span>
         </button>
-        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || annonceForm.invalid || uploadedImages.length === 0">
-          <img *ngIf="!isSubmitting" src="https://cdn-icons-png.flaticon.com/512/5610/5610944.png" alt="Publish" class="btn-icon">
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || annonceForm.invalid || uploadedImages.length === 0 || !hasChanges()">
+          <img *ngIf="!isSubmitting" src="https://cdn-icons-png.flaticon.com/512/5996/5996747.png" alt="Save" class="btn-icon">
           <div *ngIf="isSubmitting" class="spinner"></div>
-          <span>{{ isSubmitting ? 'Publication en cours...' : 'Publier l\'annonce' }}</span>
+          <span>{{ isSubmitting ? 'Enregistrement...' : 'Enregistrer les modifications' }}</span>
         </button>
       </div>
 
       <!-- Form Summary -->
       <div style="margin-top: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 8px; text-align: center; font-size: 0.875rem; color: #6b7280; border: 1px solid #e5e7eb;">
-        <strong style="color: #1f2937;">💡 Conseil:</strong> Assurez-vous que toutes les informations sont correctes avant de publier. 
-        Votre annonce sera visible par tous les utilisateurs.
+        <strong style="color: #1f2937;">💡 Note:</strong> Les modifications seront visibles immédiatement après l'enregistrement.
       </div>
     </form>
   </div>

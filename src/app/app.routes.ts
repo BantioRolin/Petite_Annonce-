@@ -11,4 +11,10 @@ import { WorkspaceComponent2 } from './workspace/workspace.component';
   { path: 'connexion' , component:LoginComponent},
   { path: 'acceuil' , component:AccueilComponent},
   { path: 'annonces' , component:AnnoncesComponent},
-  { path: 'workspace' , component:WorkspaceComponent2} ];
+  { path: 'workspace' , component:WorkspaceComponent2},
+  {
+  path: 'annonces/:id/edit',
+  loadComponent: () => import('./edit-annonce/edit-annonce.component')
+    .then(m => m.EditAnnonceComponent)
+}
+];

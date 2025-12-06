@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AnnonceService, Annonce } from './../Service/annonces-service.service';
@@ -10,10 +10,11 @@ interface ImageFile {
   data: string;
   name: string;
   file?: File;
+  isExisting?: boolean; // Flag to identify existing images
 }
 
 @Component({
-  selector: 'app-create-annonce',
+  selector: 'app-edit-annonce',
   standalone: true,
   imports: [
     CommonModule,
@@ -21,12 +22,14 @@ interface ImageFile {
     FormsModule,
     RouterModule
   ],
-  templateUrl: './annonces.component.html',
-  styleUrls: ['./annonces.component.scss']
+  templateUrl: './edit-annonce.component.html',
+  styleUrls: ['./edit-annonce.component.scss']
 })
-export class AnnoncesComponent implements OnInit, OnDestroy {
+export class EditAnnonceComponent implements OnInit, OnDestroy {
   annonceForm!: FormGroup;
   uploadedImages: ImageFile[] = [];
+  annonceId!: number;
+  originalAnnonce!: Annonce;
   
   readonly MAX_IMAGES = 5;
   readonly MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -38,6 +41,7 @@ export class AnnoncesComponent implements OnInit, OnDestroy {
   titreCount = 0;
   descriptionCount = 0;
   isSubmitting = false;
+  isLoading = true;
   uploadProgress = 0;
   
   private destroy$ = new Subject<void>();
@@ -78,13 +82,14 @@ export class AnnoncesComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private annonceService: AnnonceService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.setupCharacterCounters();
-    this.checkAuthStatus();
+    this.loadAnnonce();
   }
 
   ngOnDestroy(): void {
@@ -92,14 +97,62 @@ export class AnnoncesComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private checkAuthStatus(): void {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      this.displayAlert('Vous devez être connecté pour créer une annonce', 'warning');
-      setTimeout(() => {
-        this.router.navigate(['/login']);
-      }, 2000);
+  private loadAnnonce(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    
+    if (!id) {
+      this.displayAlert('ID d\'annonce invalide', 'error');
+      setTimeout(() => this.router.navigate(['/dashboard']), 2000);
+      return;
     }
+
+    this.annonceId = parseInt(id, 10);
+    
+    this.annonceService.getAnnonceById(this.annonceId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.originalAnnonce = response.data;
+            this.populateForm(response.data);
+            this.isLoading = false;
+          } else {
+            throw new Error('Annonce non trouvée');
+          }
+        },
+        error: (error) => {
+          console.error('Error loading annonce:', error);
+          this.displayAlert('Impossible de charger l\'annonce', 'error');
+          this.isLoading = false;
+          setTimeout(() => this.router.navigate(['/dashboard']), 2000);
+        }
+      });
+  }
+
+  private populateForm(annonce: Annonce): void {
+    this.annonceForm.patchValue({
+      titre: annonce.titre,
+      type: annonce.type,
+      prix: annonce.prix,
+      description: annonce.description,
+      ville: annonce.ville,
+      quartier: annonce.quartier,
+      telephone: annonce.telephone,
+      email: annonce.email
+    });
+
+    // Load existing images
+    if (annonce.images && annonce.images.length > 0) {
+      this.uploadedImages = annonce.images.map((url, index) => ({
+        data: url,
+        name: `Image ${index + 1}`,
+        isExisting: true
+      }));
+    }
+
+    // Update character counts
+    this.titreCount = annonce.titre?.length || 0;
+    this.descriptionCount = annonce.description?.length || 0;
   }
 
   initForm(): void {
@@ -194,7 +247,8 @@ export class AnnoncesComponent implements OnInit, OnDestroy {
           this.uploadedImages.push({
             data: e.target.result as string,
             name: file.name,
-            file: file
+            file: file,
+            isExisting: false
           });
         }
       };
@@ -238,62 +292,65 @@ export class AnnoncesComponent implements OnInit, OnDestroy {
     this.uploadProgress = 0;
 
     try {
-      // First, upload images to server
       let imageUrls: string[] = [];
       
-      if (this.uploadedImages.length > 0) {
-        const files = this.uploadedImages
-          .filter(img => img.file)
-          .map(img => img.file!);
+      // Separate existing and new images
+      const existingImages = this.uploadedImages
+        .filter(img => img.isExisting)
+        .map(img => img.data);
+      
+      const newImages = this.uploadedImages
+        .filter(img => !img.isExisting && img.file)
+        .map(img => img.file!);
+
+      // Upload new images if any
+      if (newImages.length > 0) {
+        this.displayAlert('Upload des nouvelles images en cours...', 'info');
+        this.uploadProgress = 30;
         
-        if (files.length > 0) {
-          this.displayAlert('Upload des images en cours...', 'info');
-          this.uploadProgress = 30;
-          
-          const uploadResponse = await this.annonceService
-            .uploadImages(files)
-            .pipe(takeUntil(this.destroy$))
-            .toPromise();
-          
-          if (uploadResponse?.success && uploadResponse.data) {
-            imageUrls = uploadResponse.data;
-            this.uploadProgress = 60;
-          }
-        } else {
-          // Use base64 images if no files (fallback)
-          imageUrls = this.uploadedImages.map(img => img.data);
+        const uploadResponse = await this.annonceService
+          .uploadImages(newImages)
+          .pipe(takeUntil(this.destroy$))
+          .toPromise();
+        
+        if (uploadResponse?.success && uploadResponse.data) {
+          imageUrls = [...existingImages, ...uploadResponse.data];
+          this.uploadProgress = 60;
         }
+      } else {
+        // Only existing images
+        imageUrls = existingImages;
+        this.uploadProgress = 60;
       }
 
-      // Then create the annonce
-      const annonceData: Annonce = {
+      // Update the annonce
+      const updateData: Partial<Annonce> = {
         ...this.annonceForm.value,
-        images: imageUrls,
-        statut: 'active'
+        images: imageUrls
       };
 
       this.uploadProgress = 80;
 
-      this.annonceService.createAnnonce(annonceData)
+      this.annonceService.updateAnnonce(this.annonceId, updateData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             this.uploadProgress = 100;
             
             if (response.success) {
-              this.displayAlert('Annonce publiée avec succès ! Redirection en cours...', 'success');
+              this.displayAlert('Annonce modifiée avec succès ! Redirection en cours...', 'success');
               
               setTimeout(() => {
                 this.router.navigate(['/dashboard']);
               }, 1500);
             } else {
-              throw new Error(response.message || 'Erreur lors de la publication');
+              throw new Error(response.message || 'Erreur lors de la modification');
             }
           },
           error: (error) => {
-            console.error('Error creating annonce:', error);
+            console.error('Error updating annonce:', error);
             this.displayAlert(
-              error.message || 'Erreur lors de la publication. Veuillez réessayer.', 
+              error.message || 'Erreur lors de la modification. Veuillez réessayer.', 
               'error'
             );
             this.isSubmitting = false;
@@ -327,8 +384,8 @@ export class AnnoncesComponent implements OnInit, OnDestroy {
   }
 
   onCancel(): void {
-    if (this.annonceForm.dirty || this.uploadedImages.length > 0) {
-      const confirmed = confirm('Êtes-vous sûr de vouloir annuler ? Toutes les données seront perdues.');
+    if (this.annonceForm.dirty) {
+      const confirmed = confirm('Êtes-vous sûr de vouloir annuler ? Les modifications seront perdues.');
       if (!confirmed) return;
     }
     this.router.navigate(['/dashboard']);
@@ -364,5 +421,23 @@ export class AnnoncesComponent implements OnInit, OnDestroy {
 
   selectType(typeValue: string): void {
     this.annonceForm.patchValue({ type: typeValue });
+  }
+
+  hasChanges(): boolean {
+    if (!this.originalAnnonce) return false;
+    
+    const formValue = this.annonceForm.value;
+    
+    return (
+      formValue.titre !== this.originalAnnonce.titre ||
+      formValue.type !== this.originalAnnonce.type ||
+      formValue.prix !== this.originalAnnonce.prix ||
+      formValue.description !== this.originalAnnonce.description ||
+      formValue.ville !== this.originalAnnonce.ville ||
+      formValue.quartier !== this.originalAnnonce.quartier ||
+      formValue.telephone !== this.originalAnnonce.telephone ||
+      formValue.email !== this.originalAnnonce.email ||
+      this.uploadedImages.length !== this.originalAnnonce.images?.length
+    );
   }
 }
