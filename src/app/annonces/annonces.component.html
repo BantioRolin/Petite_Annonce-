@@ -1,16 +1,16 @@
 <header class="header">
   <nav class="navbar">
     <a routerLink="/" class="logo">
-      <img src="https://cdn-icons-png.flaticon.com/512/4538/4538836.png" alt="Logo" class="logo-icon">
+      <img src="https://i.pinimg.com/736x/fd/30/ee/fd30ee9c0dfecb23afcac48fe33ef68e.jpg" alt="Logo" class="logo-icon">
       <h1>Petites Annonces</h1>
     </a>
     <div class="nav-links">
-      <a routerLink="/dashboard" class="nav-link">
-        <img src="https://cdn-icons-png.flaticon.com/512/3917/3917776.png" alt="Dashboard" class="nav-icon">
+      <a routerLink="/dashboard" class="nav-link"> 
+        <!-- <img src="https://cdn-icons-png.flaticon.com/512/3917/3917776.png" alt="Dashboard" class="nav-icon"> -->
         <span>Tableau de bord</span>
       </a>
       <a routerLink="/" class="nav-link">
-        <img src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Accueil" class="nav-icon">
+        <!-- <img src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Accueil" class="nav-icon"> -->
         <span>Accueil</span>
       </a>
     </div>
@@ -20,7 +20,7 @@
 <div class="page-header">
   <div class="container">
     <div class="page-header-icon">
-      <img src="https://cdn-icons-png.flaticon.com/512/3176/3176366.png" alt="Create">
+      <img src="https://i.pinimg.com/736x/fd/30/ee/fd30ee9c0dfecb23afcac48fe33ef68e.jpg" alt="Create">
     </div>
     <h1 class="page-title">Créer une nouvelle annonce</h1>
     <p class="page-subtitle">Remplissez les informations ci-dessous pour publier votre annonce</p>
@@ -62,7 +62,7 @@
       <!-- Section 1: Type d'annonce -->
       <div class="form-section">
         <h2 class="section-title">
-          <img src="https://cdn-icons-png.flaticon.com/512/2785/2785482.png" alt="Type" class="section-icon">
+          <img src="https://i.pinimg.com/736x/64/48/fa/6448fad0c27b8407d0ea308413501981.jpg" alt="Type" class="section-icon">
           <span>Type d'annonce</span>
         </h2>
         <p class="section-subtitle">Sélectionnez le type d'annonce que vous souhaitez créer</p>
@@ -88,7 +88,7 @@
       <!-- Section 2: Informations générales -->
       <div class="form-section">
         <h2 class="section-title">
-          <img src="https://cdn-icons-png.flaticon.com/512/2541/2541988.png" alt="Info" class="section-icon">
+          <img src="https://i.pinimg.com/736x/37/eb/f6/37ebf68ac9759797c11cc0b33b8d3f95.jpg" alt="Info" class="section-icon">
           <span>Informations générales</span>
         </h2>
         <div class="section-divider"></div>
@@ -133,7 +133,7 @@
       <!-- Section 3: Description -->
       <div class="form-section">
         <h2 class="section-title">
-          <img src="https://cdn-icons-png.flaticon.com/512/2920/2920277.png" alt="Description" class="section-icon">
+          <img src="https://i.pinimg.com/1200x/3d/b4/62/3db462785b36d560ddf78530c754a63d.jpg" alt="Description" class="section-icon">
           <span>Description détaillée</span>
         </h2>
         <p class="section-subtitle">Soyez précis et honnête dans votre description</p>
@@ -169,7 +169,7 @@
         <div class="form-row">
           <div class="form-group" [class.invalid]="isFieldInvalid('ville')">
             <label>
-              <img src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png" alt="City" class="label-icon">
+              <img src="https://i.pinimg.com/1200x/e8/3a/fc/e83afcd1de480c67d110a301a53a70e5.jpg" alt="City" class="label-icon">
               Ville <span class="required">*</span>
             </label>
             <div class="select-wrapper">
@@ -187,7 +187,7 @@
 
           <div class="form-group">
             <label>
-              <img src="https://cdn-icons-png.flaticon.com/512/854/854901.png" alt="Neighborhood" class="label-icon">
+              <img src="https://i.pinimg.com/1200x/18/29/05/182905f2bc17ae201c0807d9e4762950.jpg" alt="Neighborhood" class="label-icon">
               Quartier
             </label>
             <input 
@@ -234,7 +234,7 @@
       <!-- Section 5: Images -->
       <div class="form-section">
         <h2 class="section-title">
-          <img src="https://cdn-icons-png.flaticon.com/512/3342/3342137.png" alt="Photos" class="section-icon">
+          <img src="https://i.pinimg.com/736x/d6/da/35/d6da35ad5cc310325ef09925a7cd0bc3.jpg" alt="Photos" class="section-icon">
           <span>Photos de l'annonce</span>
         </h2>
         <p class="section-subtitle">
@@ -308,13 +308,11 @@
       <!-- Form Actions -->
       <div class="form-actions">
         <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
-          <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" alt="Cancel" class="btn-icon">
-          <span>Annuler</span>
+          <span>❌ Annuler</span>
         </button>
         <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || annonceForm.invalid || uploadedImages.length === 0">
-          <img *ngIf="!isSubmitting" src="https://cdn-icons-png.flaticon.com/512/5610/5610944.png" alt="Publish" class="btn-icon">
           <div *ngIf="isSubmitting" class="spinner"></div>
-          <span>{{ isSubmitting ? 'Publication en cours...' : 'Publier l\'annonce' }}</span>
+          <span>{{ isSubmitting ? 'Publication en cours...' : '✅ Publier l\'annonce' }}</span>
         </button>
       </div>
 

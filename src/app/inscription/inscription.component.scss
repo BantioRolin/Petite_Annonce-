@@ -9,6 +9,7 @@ $white: #ffffff;
 $border-color: #e5e7eb;
 $shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
 // Mixins
 @mixin transition($property: all) {
@@ -32,14 +33,15 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
-  background: $white;
+  background: linear-gradient(135deg, rgb(84, 123, 231) 0%, #eff0f1 100%);
+  padding: 2rem;
+  align-items: center;
 }
 
 // Left Side
 .auth-left {
-  background: linear-gradient(135deg, #4765a6d3 0%, #5970f3ff 100%);
   color: $white;
-  padding: 4rem;
+  padding: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -49,6 +51,7 @@ body {
     font-weight: 700;
     margin-bottom: 1rem;
     line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   }
   
   > p {
@@ -56,6 +59,7 @@ body {
     margin-bottom: 3rem;
     opacity: 0.95;
     line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
   }
   
   .benefits-list {
@@ -69,6 +73,16 @@ body {
     align-items: center;
     gap: 1rem;
     font-size: 1.125rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    @include transition();
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(5px);
+    }
     
     .benefit-icon {
       width: 28px;
@@ -83,45 +97,55 @@ body {
   }
 }
 
-// Right Side
+// Right Side - FORMULAIRE FLOTTANT COMPACT
 .auth-right {
-  padding: 4rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 500px;
+  max-width: 420px;
   margin: 0 auto;
   width: 100%;
+  background: $white;
+  border-radius: 24px;
+  box-shadow: $shadow-xl, 0 0 40px rgba(0, 0, 0, 0.15);
+  animation: float 6s ease-in-out infinite;
+  @include transition();
+  
+  &:hover {
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px);
+  }
   
   .form-title {
-    font-size: 2rem;
+    font-size: 1.65rem;
     font-weight: 700;
     color: $text-dark;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
   }
   
   .form-subtitle {
     color: $text-light;
-    font-size: 1rem;
-    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
   }
 }
 
-// Form
+// Form - PLUS COMPACT
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.1rem;
   
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
     
     label {
       font-weight: 600;
       color: $text-dark;
-      font-size: 0.95rem;
+      font-size: 0.875rem;
     }
     
     .input-wrapper {
@@ -131,17 +155,23 @@ body {
       
       .input-icon-img {
         position: absolute;
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         object-fit: contain;
         
         &.left {
-          left: 1rem;
+          left: 0.875rem;
+          opacity: 0.5;
+        }
+        
+        &:not(.left) {
+          left: 0.875rem;
           opacity: 0.5;
         }
         
         &.right {
-          right: 1rem;
+          left: auto;
+          right: 0.875rem;
           
           &.toggle-password {
             cursor: pointer;
@@ -158,11 +188,11 @@ body {
       
       input {
         width: 100%;
-        padding: 0.875rem 1rem;
-        padding-left: 3rem;
+        padding: 0.7rem 0.875rem;
+        padding-left: 2.6rem;
         border: 2px solid $border-color;
-        border-radius: 8px;
-        font-size: 1rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
         font-family: inherit;
         color: $text-dark;
         background: $white;
@@ -172,6 +202,7 @@ body {
           outline: none;
           border-color: $primary-color;
           box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+          transform: translateY(-1px);
         }
         
         &.error {
@@ -190,23 +221,24 @@ body {
       
       // Pour les inputs avec icône à droite (toggle password)
       input[type="password"],
-      input[type="text"]:has(+ .toggle-password) {
-        padding-right: 3rem;
+      input[type="text"]:has(~ .toggle-password) {
+        padding-right: 2.6rem;
       }
     }
     
     .error-message {
       color: $danger-color;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       font-weight: 500;
-      margin-top: 0.25rem;
+      margin-top: 0.15rem;
       display: flex;
       align-items: center;
       gap: 0.25rem;
+      animation: shake 0.3s ease;
       
       &:before {
         content: "⚠";
-        font-size: 1rem;
+        font-size: 0.875rem;
       }
     }
   }
@@ -215,16 +247,17 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    margin-top: 0.15rem;
     
     input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       cursor: pointer;
       accent-color: $primary-color;
     }
     
     label {
-      font-size: 0.9rem;
+      font-size: 0.825rem;
       color: $text-light;
       cursor: pointer;
       
@@ -244,16 +277,17 @@ body {
   
   .btn-submit {
     width: 100%;
-    padding: 1rem;
+    padding: 0.8rem;
     background: linear-gradient(135deg, $primary-color, #764ba2);
     color: $white;
     border: none;
-    border-radius: 8px;
-    font-size: 1.125rem;
+    border-radius: 10px;
+    font-size: 0.975rem;
     font-weight: 600;
     cursor: pointer;
     @include transition(all);
-    margin-top: 0.5rem;
+    margin-top: 0.4rem;
+    box-shadow: $shadow;
     
     &:hover:not(:disabled) {
       transform: translateY(-2px);
@@ -272,11 +306,12 @@ body {
   }
   
   .alert-message {
-    padding: 1rem;
-    border-radius: 8px;
+    padding: 0.8rem;
+    border-radius: 10px;
     font-weight: 500;
     text-align: center;
     animation: slideIn 0.3s ease;
+    font-size: 0.875rem;
     
     &.success {
       background: rgba(16, 185, 129, 0.1);
@@ -292,16 +327,16 @@ body {
   }
 }
 
-// Footer
+// Footer - COMPACT
 .auth-footer {
   text-align: center;
-  margin-top: 2rem;
-  padding-top: 2rem;
+  margin-top: 1.3rem;
+  padding-top: 1.3rem;
   border-top: 1px solid $border-color;
   
   p {
     color: $text-light;
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     
     a {
       color: $primary-color;
@@ -329,14 +364,45 @@ body {
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes inputFocus {
+  from {
+    transform: scale(0.98);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
 // Responsive Design
 @media (max-width: 1024px) {
   .auth-wrapper {
     grid-template-columns: 1fr;
+    padding: 1.5rem;
   }
   
   .auth-left {
-    padding: 3rem 2rem;
+    padding: 2rem 1.5rem;
     min-height: auto;
     
     h2 {
@@ -349,13 +415,18 @@ body {
   }
   
   .auth-right {
-    padding: 3rem 2rem;
+    padding: 1.8rem;
+    max-width: 100%;
   }
 }
 
 @media (max-width: 640px) {
+  .auth-wrapper {
+    padding: 1rem;
+  }
+  
   .auth-left {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1rem;
     
     h2 {
       font-size: 1.75rem;
@@ -368,6 +439,7 @@ body {
     
     .benefit-item {
       font-size: 1rem;
+      padding: 0.875rem 1rem;
       
       .benefit-icon {
         width: 24px;
@@ -377,27 +449,32 @@ body {
   }
   
   .auth-right {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
+    border-radius: 20px;
     
     .form-title {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
+    }
+    
+    .form-subtitle {
+      font-size: 0.85rem;
     }
   }
   
   .register-form {
-    gap: 1.25rem;
+    gap: 1rem;
     
     .form-group {
       .input-wrapper input {
-        padding: 0.75rem 1rem;
-        padding-left: 2.75rem;
-        font-size: 0.95rem;
+        padding: 0.65rem 0.875rem;
+        padding-left: 2.5rem;
+        font-size: 0.875rem;
       }
     }
     
     .btn-submit {
-      padding: 0.875rem;
-      font-size: 1rem;
+      padding: 0.75rem;
+      font-size: 0.925rem;
     }
   }
 }
@@ -406,14 +483,5 @@ body {
 input {
   &:focus {
     animation: inputFocus 0.3s ease;
-  }
-}
-
-@keyframes inputFocus {
-  from {
-    transform: scale(0.98);
-  }
-  to {
-    transform: scale(1);
   }
 }
