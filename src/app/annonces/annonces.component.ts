@@ -52,25 +52,25 @@ export class AnnoncesComponent implements OnInit, OnDestroy {
     { 
       value: 'vente', 
       label: 'Vente',
-      icon: 'https://cdn-icons-png.flaticon.com/512/3514/3514447.png',
+      icon: 'https://i.pinimg.com/1200x/1e/61/35/1e613566d77e10b94b3cce09ebf1ca29.jpg',
       description: 'Vendez vos biens'
     },
     { 
       value: 'location', 
       label: 'Location',
-      icon: 'https://cdn-icons-png.flaticon.com/512/1183/1183336.png',
+      icon: 'https://i.pinimg.com/736x/5f/02/bd/5f02bd3ab817ae1e4c352b1f2ea3bd5b.jpg',
       description: 'Louez votre propriété'
     },
     { 
       value: 'service', 
       label: 'Service',
-      icon: 'https://cdn-icons-png.flaticon.com/512/3074/3074767.png',
+      icon: 'https://i.pinimg.com/736x/c8/69/db/c869db8ebd11924c5f34d49224b16433.jpg',
       description: 'Proposez vos services'
     },
     { 
       value: 'emploi', 
       label: 'Emploi',
-      icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+      icon: 'https://i.pinimg.com/1200x/c1/f3/de/c1f3de20dc86889561a311fc01bcf4d7.jpg',
       description: 'Offres d\'emploi'
     }
   ];
