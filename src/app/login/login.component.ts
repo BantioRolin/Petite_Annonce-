@@ -83,20 +83,22 @@ export class LoginComponent {
     const password = this.loginForm.get('password')?.value;
 
     this.authService.login({ email, password }).subscribe({
-      next: (res) => {
-        this.alertType = 'success';
-        this.alertMessage = 'Connexion réussie !';
-
-        setTimeout(() => {
-          this.router.navigate(['/dashboard']);
-        }, 1000);
-      },
-      error: () => {
-        this.alertType = 'error';
-        this.alertMessage = 'Identifiants incorrects';
-        this.isLoading = false;
-      }
-    });
+  next: (res) => {
+    if (typeof res === 'string') {
+      // "Invalid credentials"
+      this.alertType = 'error';
+      this.alertMessage = res;
+    } else {
+      this.alertType = 'success';
+      this.alertMessage = 'Connexion réussie';
+      this.router.navigate(['/dashboard']);
+    }
+  },
+  error: () => {
+    this.alertType = 'error';
+    this.alertMessage = 'Erreur serveur';
+  }
+});
 
     setTimeout(() => {
       this.alertMessage = '';

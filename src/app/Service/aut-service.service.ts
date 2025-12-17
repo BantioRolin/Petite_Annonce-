@@ -3,7 +3,6 @@ import { environment } from '../../environments/environment.prod';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -13,31 +12,37 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
+  /** -------- INSCRIPTION -------- */
   register(data: { name: string; email: string; password: string }): Observable<any> {
     return this.http.post(`${this.API_URL}/auth/register`, data);
   }
 
+  /** -------- CONNEXION -------- */
   login(data: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.API_URL}/auth/login`, data);
+    return this.http.post(`${this.API_URL}/auth/login`, data).pipe(
+      tap((res: any) => {
+        if (res && typeof res === 'object') {
+          // on stocke l'utilisateur
+          localStorage.setItem('user', JSON.stringify(res));
+        }
+      })
+    );
   }
 
-  /** -------------- DÉCONNEXION -------------- **/
+  /** -------- DÉCONNEXION -------- */
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 
-  /** -------------- OBTENIR LE TOKEN -------------- **/
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  /** -------------- UTILISATEUR CONNECTÉ ? -------------- **/
+  /** -------- UTILISATEUR CONNECTÉ ? -------- */
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('user');
   }
 
-  /** -------------- RÉCUPÉRER PROFIL USER -------------- **/
-  getProfile(): Observable<any> {
-    return this.http.get(`${this.API_URL}/auth/me`);
+  /** -------- UTILISATEUR COURANT -------- */
+  getCurrentUser(): any {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
   }
 }
+
