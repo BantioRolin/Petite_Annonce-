@@ -2,6 +2,7 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment.prod';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import * as Sentry from "@sentry/angular";
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,7 @@ export class AuthService {
     this.http.post(`${this.API_URL}/auth/logout`, {}).subscribe({
       next: () => {
         localStorage.removeItem('user');
+        Sentry.setUser(null);
       },
       error: () => {
         // even on error, remove local state
@@ -55,7 +57,14 @@ export class AuthService {
   /** -------- UTILISATEUR COURANT -------- */
   getCurrentUser(): any {
     const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    const parsedUser = user ? JSON.parse(user) : null;
+
+    Sentry.setUser(parsedUser ? {
+      id: parsedUser.id,
+      email: parsedUser.email,
+    } : null);
+
+    return parsedUser;
   }
 }
 

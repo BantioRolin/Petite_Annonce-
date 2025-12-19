@@ -69,7 +69,7 @@ export class InscriptionComponent {
     return null;
   }
 
-  togglePasswordVisibility(field: 'password' | 'confirmPassword'): void {
+  togglePasswordVisibility(field: 'password' | 'confirmPassword') : void {
     if (field === 'password') {
       this.showPassword = !this.showPassword;
     } else {

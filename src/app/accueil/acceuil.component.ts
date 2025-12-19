@@ -2,7 +2,7 @@ import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
+import * as Sentry from "@sentry/angular";
 interface Feature {
   icon: string;
   title: string;
@@ -41,6 +41,16 @@ export class AccueilComponent {
 
   ngOnInit() {
     this.loadAnnonces();
+  }
+
+  public throwTestError(): void {
+    // Send a log before throwing the error
+    Sentry.logger.info(Sentry.logger.fmt`User ${"sentry-test"} triggered test error button`, {
+      action: "test_error_button_click",
+    });
+    // Send a test metric before throwing the error
+    Sentry.metrics.count('test_counter', 1);
+    throw new Error("Sentry Test Error");
   }
 
   loadAnnonces() {
