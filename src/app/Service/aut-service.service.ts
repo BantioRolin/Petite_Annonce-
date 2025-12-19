@@ -14,15 +14,18 @@ export class AuthService {
 
   /** -------- INSCRIPTION -------- */
   register(data: { name: string; email: string; password: string }): Observable<any> {
+    // withCredentials is handled by the global interceptor
     return this.http.post(`${this.API_URL}/auth/register`, data);
   }
 
   /** -------- CONNEXION -------- */
   login(data: { email: string; password: string }): Observable<any> {
+    // withCredentials is set globally by the interceptor so the session cookie
+    // from the backend will be accepted by the browser.
     return this.http.post(`${this.API_URL}/auth/login`, data).pipe(
       tap((res: any) => {
         if (res && typeof res === 'object') {
-          // on stocke l'utilisateur
+          // store minimal user info in localStorage for UI state
           localStorage.setItem('user', JSON.stringify(res));
         }
       })
@@ -31,7 +34,17 @@ export class AuthService {
 
   /** -------- DÉCONNEXION -------- */
   logout(): void {
-    localStorage.removeItem('user');
+    // Call backend to clear the session cookie (if backend exposes /auth/logout)
+    // We don't wait for the response here, but ensure the cookie is requested to be cleared.
+    this.http.post(`${this.API_URL}/auth/logout`, {}).subscribe({
+      next: () => {
+        localStorage.removeItem('user');
+      },
+      error: () => {
+        // even on error, remove local state
+        localStorage.removeItem('user');
+      }
+    });
   }
 
   /** -------- UTILISATEUR CONNECTÉ ? -------- */
