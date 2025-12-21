@@ -1,5 +1,5 @@
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as Sentry from "@sentry/angular";
@@ -11,7 +11,7 @@ export class AuthService {
 
   private API_URL = environment.BACKURL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /** -------- INSCRIPTION -------- */
   register(data: { name: string; email: string; password: string }): Observable<any> {

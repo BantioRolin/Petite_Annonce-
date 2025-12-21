@@ -5,21 +5,22 @@ import { Router, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AnnonceService, Annonce } from '../Service/annonces-service.service';
+import { AuthService } from '../Service/aut-service.service';
+
+// ... interface User unchanged
+interface User {
+  id: number;
+  nom: string;
+  email: string;
+  telephone: string;
+  ville: string;
+}
 
 interface DashboardStats {
   total: number;
   active: number;
   inactive: number;
   views: number;
-}
-
-interface User {
-  id: number;
-  nom: string;
-  email: string;
-  telephone?: string;
-  ville?: string;
-  avatar?: string;
 }
 
 @Component({
@@ -34,7 +35,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
   annonces: Annonce[] = [];
   filteredAnnonces: Annonce[] = [];
   recentAnnonces: Annonce[] = [];
-  
+
   stats: DashboardStats = {
     total: 0,
     active: 0,
@@ -43,9 +44,9 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
   };
 
   user: User = {
-    id: 1,
-    nom: 'John Doe',
-    email: 'john.doe@exemple.com',
+    id: 0,
+    nom: '',
+    email: '',
     telephone: '',
     ville: ''
   };
@@ -70,11 +71,13 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private annonceService: AnnonceService
-  ) {}
+    private annonceService: AnnonceService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
-    this.checkAuth();
+    if (!this.checkAuth()) return;
+    this.loadUserData();
     this.loadUserAnnonces();
   }
 
@@ -83,10 +86,28 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private checkAuth(): void {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
+  private checkAuth(): boolean {
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
+      return false;
+    }
+    return true;
+  }
+
+  loadUserData(): void {
+    const data = this.authService.getCurrentUser();
+    if (data && data.user) {
+      const backendUser = data.user;
+      this.user = {
+        id: backendUser.id,
+        nom: backendUser.name, // Mapping 'name' from backend to 'nom'
+        email: backendUser.email,
+        telephone: backendUser.telephone || '', // Assuming these might exist or defaulting
+        ville: backendUser.ville || ''
+      };
+
+      // If annonces are present in the login response and we are empty, we could clear/init them, 
+      // but loadUserAnnonces fetches fresh data.
     }
   }
 
@@ -147,7 +168,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     // Search
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(a => 
+      filtered = filtered.filter(a =>
         a.titre.toLowerCase().includes(query) ||
         a.description.toLowerCase().includes(query) ||
         a.ville.toLowerCase().includes(query)
@@ -246,7 +267,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
               this.updateStats();
               this.applyFilters();
               this.displayAlert(
-                `Annonce ${newStatus === 'active' ? 'activée' : 'désactivée'} avec succès`, 
+                `Annonce ${newStatus === 'active' ? 'activée' : 'désactivée'} avec succès`,
                 'success'
               );
             }
