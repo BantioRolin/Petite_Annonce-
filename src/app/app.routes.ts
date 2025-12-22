@@ -8,6 +8,8 @@ import { AnnoncesComponent } from './annonces/annonces.component';
   { path: '', component: AccueilComponent },
   { path: 'inscription', component: InscriptionComponent },
   { path: 'connexion' , component:LoginComponent},
+  // alias route for English/other code that navigates to '/login'
+  { path: 'login', component: LoginComponent },
   { path: 'acceuil' , component:AccueilComponent},
   { path: 'annonces' , component:AnnoncesComponent},
 {

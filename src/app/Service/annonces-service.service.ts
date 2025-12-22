@@ -156,7 +156,8 @@ export class AnnonceService {
    */
   getUserAnnonces(): Observable<ApiResponse<Annonce[]>> {
     return this.http.get<ApiResponse<Annonce[]>>(`${this.apiUrl}/user/me`, { 
-      headers: this.getHeaders() 
+      headers: this.getHeaders(),
+      withCredentials: true
     }).pipe(
       catchError(this.handleError)
     );
